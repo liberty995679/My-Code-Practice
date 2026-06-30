@@ -1,0 +1,7 @@
+*.exe
+*.txt
+.cph/
+.vscode/
+ccpc笔记/
+蓝桥杯/
+洛谷题/
