@@ -1,6 +1,7 @@
 # Algorithm Learning
 
 这是我的算法学习仓库，主要用于记录算法与数据结构的学习过程。
+写的题目主要是youknowwho和codeforces
 
 ## 内容
 
