@@ -1,75 +1,59 @@
+// 你有一个长度为 n 的数组 a。
+// 在一次操作中，你可以选择一个下标 i（满足 2 ≤ i ≤ n−1），并执行以下两种动作之一：
+// 将 a[i−1] 减 1，同时将 a[i+1] 加 1
+// 将 a[i+1] 减 1，同时将 a[i−1] 加 1
+// 每次操作后，所有元素的值必须保持非负。​
+// 问：是否可以通过任意次操作，使得数组中所有元素都相等？
+// 输入格式
+// 第一行包含一个整数 t（1 ≤ t ≤ 10^4）——测试用例的数量。
+// 每个测试用例的第一行包含一个整数 n（3 ≤ n ≤ 2·10^5）。
+// 每个测试用例的第二行包含 n 个整数 a[i]（1 ≤ a[i] ≤ 10^9）。
+// 保证所有测试用例的 n 之和不超过 2·10^5。
+// 输出格式
+// 对于每个测试用例：
+// 如果可以通过若干次操作使所有元素相等，输出 "YES"
+// 否则输出 "NO"
+// 输出不区分大小写，例如 "yes"、"YeS"、"nO" 都会被判为正确。
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <sstream>
+#include <cmath>
 #include <string>
 #include <climits>
+#include <utility>
+#include <queue>
+#include <stack>
+#include <unordered_map>
+#include <unordered_set>
+#include <list>
+#include <map>
+#include <set>
 using namespace std;
 using ll = long long;
-using ull = unsigned long long;
 const char enl = '\n';
 
-// 计算一个数各位数字的乘积，含0则返回0
-ull digitProduct(ull n) {
-    if (n == 0) return 0;
-    ull p = 1;
-    while (n > 0) {
-        int d = n % 10;
-        if (d == 0) return 0;
-        p *= d;
-        n /= 10;
-    }
-    return p;
-}
-
 void solve() {
-    ull a, b;
-    cin >> a >> b;
-
-    string sa = to_string(a), sb = to_string(b);
-    int na = sa.size(), nb = sb.size();
-
-    // 核心观察：最优答案一定是"某前缀 + 全9后缀"的形式
-    // 因为如果某位不是9，把它后面全换成9乘积只会更大
-    // 所以只需枚举两类候选：从上界b往下凑、从下界a往上凑
-    vector<ull> cands = {a, b};
-
-    // 类型1：基于上界b，把第i位减小，后面全填9（保证 <= b）
-    for (int i = 0; i < nb; i++) {
-        for (int d = 1; d < (sb[i] - '0'); d++) {
-            string t = sb.substr(0, i) + char('0' + d) + string(nb - i - 1, '9');
-            ull v = stoull(t);
-            if (v >= a) cands.push_back(v); // 还要在区间内
-        }
+    ll n;
+    cin >> n;
+    vector<ll> arr(n);
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    ll odd = 0; ll odd_cnt = 0;
+    ll even = 0; ll even_cnt = 0;
+    for (int i = 0; i < n; i+=2) {
+        odd += arr[i];
+        odd_cnt++;
     }
-
-    // 类型2：基于下界a，把第i位增大，后面全填9（保证 >= a）
-    for (int i = 0; i < na; i++) {
-        for (int d = (sa[i] - '0') + 1; d <= 9; d++) {
-            string t = sa.substr(0, i) + char('0' + d) + string(na - i - 1, '9');
-            ull v = stoull(t);
-            if (v <= b) cands.push_back(v); // 还要在区间内
-        }
+    for (int i = 1; i < n; i+=2) {
+        even += arr[i];
+        even_cnt++;
     }
-
-    // 类型3：纯9形式（9, 99, 999...），单独补充
-    string nines = "";
-    for (int len = 1; len <= nb; len++) {
-        nines += '9';
-        ull v = stoull(nines);
-        if (v >= a && v <= b) cands.push_back(v);
+    ll x = odd / odd_cnt;
+    if (odd % odd_cnt == 0 && even_cnt * x == even) {
+        cout << "YES" << enl;
+    } else {
+        cout << "NO" << enl;
     }
-
-    // 遍历所有候选，取乘积最大的那个数
-    ull ans = a, bestP = digitProduct(a);
-    for (ull c : cands) {
-        ull p = digitProduct(c);
-        if (p > bestP) {
-            bestP = p;
-            ans = c;
-        }
-    }
-
-    cout << ans << enl;
 }
 
 int main() {
@@ -78,6 +62,10 @@ int main() {
 #endif
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    solve();
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
     return 0;
 }
